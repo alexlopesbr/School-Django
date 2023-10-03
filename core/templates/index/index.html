@@ -1,11 +1,9 @@
-{% comment %} <h1>{{request.user}}</h1>
-<h2>{{request.user.id}}</h2> {% endcomment %}
 <h1>Index Page</h1>
 <form action="/index/login" method="post">
     {% csrf_token %}
-    <label for="username">username: </label>
+    <label for="email">email: </label>
+    <input id="your_email" type="text" name="email" value="{{ email }}">
     <label for="password">password: </label>
-    <input id="your_username" type="text" name="username" value="{{ username }}">
     <input id="your_password" type="text" name="password" value="{{ password }}">
     <input type="submit" value="OK">
 </form>

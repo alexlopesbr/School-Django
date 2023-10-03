@@ -8,9 +8,20 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
+    STAFF = 'staff'
+    TEATCHER = 'teatcher'
+    STUDENT = 'student'
+
+    ROLE_CHOICES = (
+        (STAFF, 'staff'),
+        (TEATCHER, 'teatcher'),
+        (STUDENT, 'student'),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = None
     email = models.EmailField(_("email address"), unique=True)
+    role = models.CharField(max_length=8, choices=ROLE_CHOICES)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
