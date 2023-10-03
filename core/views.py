@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 
+from . models import CustomUser
+from staff.views import staff_home
+
 
 def index(request):
     index_template = 'index/index.html'
@@ -8,7 +11,6 @@ def index(request):
 
 
 def login_user(request):
-    home_template = 'home/home.html'
     index_template = 'index/index.html'
 
     email = request.POST.get('email')
@@ -16,7 +18,8 @@ def login_user(request):
     user = authenticate(request, email=email, password=password)
     if user is not None:
         login(request, user)
-        return render(request, home_template)
+        if user.role == CustomUser.STAFF:
+            return staff_home(request)
     return render(request, index_template)
 
 
