@@ -1,10 +1,14 @@
-<h1>Index Page</h1>
-<form action="/index/login" method="post">
-    {% csrf_token %}
-    <label for="email">email: </label>
-    <input id="your_email" type="text" name="email" value="{{ email }}">
-    <label for="password">password: </label>
-    <input id="your_password" type="text" name="password" value="{{ password }}">
-    <input type="submit" value="OK">
-</form>
-
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
