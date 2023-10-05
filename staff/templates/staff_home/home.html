@@ -1,7 +1,0 @@
-<h1>Staff Page</h1>
-<h1>Wellcome {{request.user}}</h1>
-
-<form action="/index/logout" method="post">
-    {% csrf_token %}
-    <input type="submit" value="logout">
-</form>

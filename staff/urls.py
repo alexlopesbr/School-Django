@@ -1,7 +1,7 @@
 from django.urls import path
 
-import staff.views as staff_views
+from .views import staff_home
 
 urlpatterns = [
-    path('home', staff_views.staff_home, name='staff_home'),
+    path('home', staff_home, name='staff_home'),
 ]
