@@ -11,5 +11,10 @@
         {{ form.as_p }}
         <input type="submit" value="Register">
     </form>
+    {% if message %}
+        <span class="alert">
+            {{ message }}
+        </span>
+    {% endif %}
 </body>
 </html>
