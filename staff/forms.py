@@ -15,3 +15,13 @@ class UserRegister(forms.Form):
     role = forms.ChoiceField(
         choices=CustomUser.ROLE_CHOICES
     )
+
+class UserList(forms.Form):
+    ROLE_CHOICES = [
+        ('all', 'All'),
+        *CustomUser.ROLE_CHOICES
+    ]
+
+    role = forms.ChoiceField(
+        choices=ROLE_CHOICES
+    )

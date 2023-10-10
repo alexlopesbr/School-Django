@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from core.models import CustomUser
 from core.email import send_email
-from staff.forms import UserRegister
+from staff.forms import UserRegister, UserList
 
 from teacher.models import Teacher
 
@@ -60,3 +60,31 @@ class Home(View):
         new_user.set_password(password)
         # new_user.save()
         return new_user
+
+class UserList(View):
+    form_class = UserList
+    template_index = 'staff/list_user.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return self._render_login_form(request, form)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if not form.is_valid():
+            message = 'invalid form'
+            return self._render_login_form(request, form, message=message)
+        return self._render_login_form(request, form)
+
+    def _render_login_form(self, request, form, message = None):
+        users = CustomUser.objects.all()
+        role = request.POST.get('role')
+        if role:
+            users = users.filter(role=role)
+
+        context = {
+            'form': form,
+            'message': message,
+            'users': users
+        }
+        return render(request, self.template_index, context)
