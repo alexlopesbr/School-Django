@@ -1,9 +1,12 @@
 import uuid
 
+from django.core.cache import cache
 from django.shortcuts import render
 from django.views import View
 from django.conf import settings
 from django.contrib import messages
+
+from core.cache import CachedData
 from core.models import CustomUser
 from core.email import send_email
 from staff.forms import UserRegister, UserList
@@ -65,22 +68,29 @@ class UserList(View):
     form_class = UserList
     template_index = 'staff/list_user.html'
 
+    users = CachedData(
+        'cached_users',
+        CustomUser,
+        300
+    ).cache_model()
+
     def get(self, request, *args, **kwargs):
+
         form = self.form_class()
-        return self._render_login_form(request, form)
+        return self._render_user_list_form(request, form, users=self.users)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if not form.is_valid():
             message = 'invalid form'
-            return self._render_login_form(request, form, message=message)
-        return self._render_login_form(request, form)
+            return self._render_user_list_form(request, form, users=self.users, message=message)
+        return self._render_user_list_form(request, form, users=self.users)
 
-    def _render_login_form(self, request, form, message = None):
-        users = CustomUser.objects.all()
+    def _render_user_list_form(self, request, form, message=None, users=None):
         role = request.POST.get('role')
-        if role:
-            users = users.filter(role=role)
+
+        if role in [role[1] for role in CustomUser.ROLE_CHOICES]:
+            users = [user for user in users if user.role == role]
 
         context = {
             'form': form,

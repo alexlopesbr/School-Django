@@ -16,7 +16,8 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Role</th>
                     <th>Email</th>
                 </tr>
             </thead>
@@ -24,7 +25,8 @@
                 {% for user in users %}
                     <tr>
                         <td>{{ user.id }}</td>
-                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.role }}</td>
                         <td>{{ user.email }}</td>
                     </tr>
                 {% endfor %}
