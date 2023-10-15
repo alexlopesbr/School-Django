@@ -13,25 +13,29 @@ from staff.forms import UserRegister, UserList
 
 from teacher.models import Teacher
 
+
 class Home(View):
     form_class = UserRegister
     template_index = 'staff/home.html'
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-        return self._render_login_form(request, form)
+        context = {'form': form}
+        return render(request, self.template_index, context)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if not form.is_valid():
             message = 'invalid form'
-            return self._render_login_form(request, form, message=message)
+            context = {'form': form, 'message': message}
+            return render(request, self.template_index, context)
 
         new_user = self._register_user(request)
 
         if new_user is None:
             message = 'Problems to save user'
-            return self._render_login_form(request, form, message=message)
+            context = {'form': form, 'message': message}
+            return render(request, self.template_index, context)
 
         send_email(
             f'Hello {new_user.first_name}',
@@ -39,9 +43,6 @@ class Home(View):
             new_user.email
         )
         message = 'User created successfully.'
-        return self._render_login_form(request, form, message=message)
-
-    def _render_login_form(self, request, form, message = None):
         context = {'form': form, 'message': message}
         return render(request, self.template_index, context)
 
@@ -61,7 +62,7 @@ class Home(View):
             return None
 
         new_user.set_password(password)
-        # new_user.save()
+        new_user.save()
         return new_user
 
 class UserList(View):
@@ -75,26 +76,28 @@ class UserList(View):
     ).cache_model()
 
     def get(self, request, *args, **kwargs):
-
         form = self.form_class()
-        return self._render_user_list_form(request, form, users=self.users)
+        context = {'form': form, 'users': self.users}
+        return render(request, self.template_index, context)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        if not form.is_valid():
-            message = 'invalid form'
-            return self._render_user_list_form(request, form, users=self.users, message=message)
-        return self._render_user_list_form(request, form, users=self.users)
-
-    def _render_user_list_form(self, request, form, message=None, users=None):
-        role = request.POST.get('role')
-
-        if role in [role[1] for role in CustomUser.ROLE_CHOICES]:
-            users = [user for user in users if user.role == role]
-
         context = {
             'form': form,
-            'message': message,
-            'users': users
+            'users': self.users
         }
+        if not form.is_valid():
+            context['message'] = 'invalid form'
+            return render(request, self.template_index, context)
+
+        # users = self.filter_users_by_role_choice(request, self.users)
+        context['users'] = self.filter_users_by_role_choice(request, self.users)
         return render(request, self.template_index, context)
+
+    def filter_users_by_role_choice(self, request, users):
+        role = request.POST.get('role')
+
+        # filter only by the valid choices excluding as example the choice all
+        if role in [role[1] for role in CustomUser.ROLE_CHOICES]:
+            return [user for user in users if user.role == role]
+        return users
