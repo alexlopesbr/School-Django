@@ -65,6 +65,7 @@ class Home(View):
         new_user.save()
         return new_user
 
+
 class UserList(View):
     form_class = UserList
     template_index = 'staff/list_user.html'
