@@ -3,8 +3,10 @@
 <head>
 </head>
 <body>
+    {% load static %}
+
     <h1>filter by Role</h1>
-    <form method="post">
+    <form method="get">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="filter">
@@ -35,5 +37,7 @@
     {% else %}
         <p>No users found.</p>
     {% endif %}
+
+    <script src="{% static 'js/form_user_list_filter.js' %}"></script>
 </body>
 </html>

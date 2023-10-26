@@ -70,35 +70,24 @@ class UserList(View):
     form_class = UserList
     template_index = 'staff/list_user.html'
 
-    users = CachedData(
-        'cached_users',
-        CustomUser,
-        300
-    ).cache_model()
-
     def get(self, request, *args, **kwargs):
+        role_filter = request.GET.get('role')
+
+        users = self.filter_users_by_role_choice(role_filter)
+
         form = self.form_class()
-        context = {'form': form, 'users': self.users}
+        context = {'form': form, 'users': users}
         return render(request, self.template_index, context)
 
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        context = {
-            'form': form,
-            'users': self.users
-        }
-        if not form.is_valid():
-            context['message'] = 'invalid form'
-            return render(request, self.template_index, context)
 
-        # users = self.filter_users_by_role_choice(request, self.users)
-        context['users'] = self.filter_users_by_role_choice(request, self.users)
-        return render(request, self.template_index, context)
-
-    def filter_users_by_role_choice(self, request, users):
-        role = request.POST.get('role')
+    def filter_users_by_role_choice(self, role_filter):
+        users = CachedData(
+            'cached_users',
+            CustomUser,
+            300
+        ).cache_model()
 
         # filter only by the valid choices excluding as example the choice all
-        if role in [role[1] for role in CustomUser.ROLE_CHOICES]:
-            return [user for user in users if user.role == role]
+        if role_filter in [role[1] for role in CustomUser.ROLE_CHOICES]:
+            return [user for user in users if user.role == role_filter]
         return users

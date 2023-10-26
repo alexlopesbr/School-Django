@@ -23,5 +23,6 @@ class UserList(forms.Form):
     ]
 
     role = forms.ChoiceField(
-        choices=ROLE_CHOICES
+        choices=ROLE_CHOICES,
+        widget=forms.Select(attrs={'id': 'roleSelect'})
     )
