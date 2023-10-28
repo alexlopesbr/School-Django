@@ -4,6 +4,9 @@
 </head>
 <body>
     {% load static %}
+    <h1>Staff Page</h1>
+    <h1>Wellcome {{request.user}}</h1>
+    {% include "staff/link_bar.html" %}
 
     <h1>filter by Role</h1>
     <form method="get">
