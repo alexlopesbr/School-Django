@@ -8,7 +8,7 @@
     <h1>Wellcome {{request.user}}</h1>
     {% include "staff/link_bar.html" %}
 
-    <h1>filter by Role</h1>
+    <h2>Filter by role</h2>
     <form method="get">
         {% csrf_token %}
         {{ form.as_p }}
