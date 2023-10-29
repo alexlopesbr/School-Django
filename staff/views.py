@@ -1,20 +1,18 @@
 import uuid
 
-from django.core.cache import cache
 from django.shortcuts import render
 from django.views import View
-from django.conf import settings
-from django.contrib import messages
 
 from core.cache import CachedData
-from core.models import CustomUser
 from core.email import send_email
+from core.models import CustomUser
+
 from staff.forms import UserRegister, UserList
 
 from teacher.models import Teacher
 
 
-class Home(View):
+class RegisterUser(View):
     form_class = UserRegister
     template_index = 'staff/home.html'
 
