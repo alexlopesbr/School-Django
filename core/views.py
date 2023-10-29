@@ -8,7 +8,7 @@ from . forms import LoginForm
 
 
 class Login(View):
-    STAFF_HOME_URL = '/staff/home'
+    STAFF_HOME_URL = '/staff/user-list'
     STUDENT_HOME_URL = '/student/home'
     TEACHER_HOME_URL = '/teacher/home'
 
