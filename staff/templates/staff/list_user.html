@@ -24,6 +24,7 @@
                     <th>First Name</th>
                     <th>Role</th>
                     <th>Email</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +34,13 @@
                         <td>{{ user.first_name }}</td>
                         <td>{{ user.role }}</td>
                         <td>{{ user.email }}</td>
+                        <td>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit">Edit</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

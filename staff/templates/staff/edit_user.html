@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1>Staff Page</h1>
+    {% include "staff/link_bar.html" %}
+    <h2>Edit user</h2>
+    {% if user %}
+        <p>id - {{ user.id }}</p>
+        <p>name - {{ user.first_name }}</p>
+        <p>role - {{ user.role }}</p>
+        <p>email - {{ user.email }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Edit">
+    </form>
+    {% if message %}
+        <span class="alert">
+            {{ message }}
+        </span>
+    {% endif %}
+</body>
+</html>

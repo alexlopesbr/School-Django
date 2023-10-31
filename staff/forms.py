@@ -3,7 +3,7 @@ from django import forms
 from core.models import CustomUser
 
 
-class UserRegister(forms.Form):
+class UserForm(forms.Form):
     email = forms.EmailField(
         label='Email',
         widget=forms.EmailInput(attrs={'class': 'form-control'})

@@ -1,31 +1,30 @@
 import uuid
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 
 from core.cache import CachedData
 from core.email import send_email
 from core.models import CustomUser
-
-from staff.forms import UserRegister, UserList
+from staff.forms import UserForm, UserList
 
 from teacher.models import Teacher
 
 
 class RegisterUser(View):
-    form_class = UserRegister
-    template_index = 'staff/home.html'
+    form_class = UserForm
+    template_index = "staff/home.html"
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-        context = {'form': form}
+        context = {"form": form}
         return render(request, self.template_index, context)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if not form.is_valid():
-            message = 'invalid form'
-            context = {'form': form, 'message': message}
+            message = "invalid form"
+            context = {"form": form, "message": message}
             return render(request, self.template_index, context)
 
         new_user = self._register_user(request)
@@ -66,7 +65,8 @@ class RegisterUser(View):
 
 class UserList(View):
     form_class = UserList
-    template_index = 'staff/list_user.html'
+    template_index = "staff/list_user.html"
+    template_edit = "staff/edit_user.html"
 
     def get(self, request, *args, **kwargs):
         role_filter = request.GET.get('role')
@@ -77,6 +77,15 @@ class UserList(View):
         context = {'form': form, 'users': users}
         return render(request, self.template_index, context)
 
+    def post(self, request, *args, **kwargs):
+        form = UserForm
+        user_id = request.POST.get("user_id")
+
+        # Retrieve the user based on the provided user_id
+        user = CustomUser.objects.get(id=user_id)
+        request.session['user_id'] = user_id
+        form = form()
+        return redirect('staff_user_edit')
 
     def filter_users_by_role_choice(self, role_filter):
         users = CachedData(
@@ -89,3 +98,17 @@ class UserList(View):
         if role_filter in [role[1] for role in CustomUser.ROLE_CHOICES]:
             return [user for user in users if user.role == role_filter]
         return users
+
+
+class UserEdit(View):
+    form_class = UserForm
+    template_index = "staff/edit_user.html"
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.session.get('user_id')
+
+        user = CustomUser.objects.get(id=user_id)
+
+        form = self.form_class()
+        context = {"form": form, "user": user}
+        return render(request, self.template_index, context)
