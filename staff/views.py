@@ -80,8 +80,6 @@ class UserList(View):
     def post(self, request, *args, **kwargs):
         form = UserForm
         user_id = request.POST.get("user_id")
-
-        # Retrieve the user based on the provided user_id
         user = CustomUser.objects.get(id=user_id)
         request.session['user_id'] = user_id
         form = form()
@@ -109,6 +107,25 @@ class UserEdit(View):
 
         user = CustomUser.objects.get(id=user_id)
 
-        form = self.form_class()
+        form = self.form_class(is_editing=True)
         context = {"form": form, "user": user}
         return render(request, self.template_index, context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, is_editing=True)
+
+        if form.is_valid():
+            user_id = request.session.get('user_id')
+            user = CustomUser.objects.get(id=user_id)
+
+            for field, value in form.cleaned_data.items():
+                if value is not None:
+                    setattr(user, field, value)
+
+            user.save()
+            return redirect('staff_user_list')
+        else:
+            user_id = request.session.get('user_id')
+            user = CustomUser.objects.get(id=user_id)
+            context = {"form": form, "user": user}
+            return render(request, self.template_index, context)

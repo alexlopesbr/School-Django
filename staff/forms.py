@@ -4,6 +4,13 @@ from core.models import CustomUser
 
 
 class UserForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        is_editing = kwargs.pop('is_editing', False)
+        super(UserForm, self).__init__(*args, **kwargs)
+        if is_editing:
+            self.fields['first_name'].required = False
+            self.fields['role'].required = False
+
     email = forms.EmailField(
         label='Email',
         widget=forms.EmailInput(attrs={'class': 'form-control'})
@@ -15,6 +22,7 @@ class UserForm(forms.Form):
     role = forms.ChoiceField(
         choices=CustomUser.ROLE_CHOICES
     )
+
 
 class UserList(forms.Form):
     ROLE_CHOICES = [
