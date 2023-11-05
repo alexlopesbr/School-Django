@@ -6,7 +6,7 @@ from django.views import View
 from core.cache import CachedData
 from core.email import send_email
 from core.models import CustomUser
-from staff.forms import UserForm, UserList
+from staff.forms import UserForm, UserListForm
 
 from teacher.models import Teacher
 
@@ -51,10 +51,10 @@ class RegisterUser(View):
 
         if role == CustomUser.TEATCHER:
             new_user = Teacher(email=email, first_name=first_name, role=role)
-        elif role == CustomUser.STAFF:
-            new_user = Staff(email=email, first_name=first_name, role=role)
-        elif role == CustomUser.STUDENT:
-            new_user = Student(email=email, first_name=first_name, role=role)
+        # elif role == CustomUser.STAFF:
+        #     new_user = Staff(email=email, first_name=first_name, role=role)
+        # elif role == CustomUser.STUDENT:
+        #     new_user = Student(email=email, first_name=first_name, role=role)
         else:
             return None
 
@@ -64,7 +64,7 @@ class RegisterUser(View):
 
 
 class UserList(View):
-    form_class = UserList
+    form_class = UserListForm
     template_index = "staff/list_user.html"
     template_edit = "staff/edit_user.html"
 
@@ -80,7 +80,6 @@ class UserList(View):
     def post(self, request, *args, **kwargs):
         form = UserForm
         user_id = request.POST.get("user_id")
-        user = CustomUser.objects.get(id=user_id)
         request.session['user_id'] = user_id
         form = form()
         return redirect('staff_user_edit')
@@ -125,6 +124,7 @@ class UserEdit(View):
             user.save()
             return redirect('staff_user_list')
         else:
+
             user_id = request.session.get('user_id')
             user = CustomUser.objects.get(id=user_id)
             context = {"form": form, "user": user}

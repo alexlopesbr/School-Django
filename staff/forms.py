@@ -8,6 +8,7 @@ class UserForm(forms.Form):
         is_editing = kwargs.pop('is_editing', False)
         super(UserForm, self).__init__(*args, **kwargs)
         if is_editing:
+            self.fields['email'].required = False
             self.fields['first_name'].required = False
             self.fields['role'].required = False
 
@@ -24,7 +25,7 @@ class UserForm(forms.Form):
     )
 
 
-class UserList(forms.Form):
+class UserListForm(forms.Form):
     ROLE_CHOICES = [
         ('all', 'All'),
         *CustomUser.ROLE_CHOICES
