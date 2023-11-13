@@ -25,6 +25,7 @@
                     <th>Role</th>
                     <th>Email</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -38,7 +39,14 @@
                             <form method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit">Edit</button>
+                                <button type="submit" name="edit_button">Edit</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" name="delete_button">Delete</button>
                             </form>
                         </td>
                     </tr>

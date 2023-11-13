@@ -78,11 +78,15 @@ class UserList(View):
         return render(request, self.template_index, context)
 
     def post(self, request, *args, **kwargs):
-        form = UserForm
         user_id = request.POST.get("user_id")
-        request.session['user_id'] = user_id
-        form = form()
-        return redirect('staff_user_edit')
+        if 'edit_button' in request:
+            form = UserForm
+            request.session['user_id'] = user_id
+            form = form()
+            return redirect('staff_user_edit')
+        if 'delete_button' in request.POST:
+            CustomUser.objects.get(id=user_id).delete()
+            return redirect('staff_user_list')
 
     def filter_users_by_role_choice(self, role_filter):
         users = CachedData(
