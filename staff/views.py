@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.cache import cache
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -79,13 +80,16 @@ class UserList(View):
 
     def post(self, request, *args, **kwargs):
         user_id = request.POST.get("user_id")
-        if 'edit_button' in request:
+        if 'edit_button' in request.POST:
             form = UserForm
             request.session['user_id'] = user_id
             form = form()
+            cache.delete('cached_users')
             return redirect('staff_user_edit')
         if 'delete_button' in request.POST:
             CustomUser.objects.get(id=user_id).delete()
+            cache.delete('cached_users')
+
             return redirect('staff_user_list')
 
     def filter_users_by_role_choice(self, role_filter):
